@@ -23,6 +23,7 @@ $(document).ready(function() {
     }
 
     //Clock
+    console.log(game.timeRemaining);
     var currentMinute = game.flavorMinute + Math.floor(game.currentTime / 60);
     var currentSecond = game.currentTime - (Math.floor(game.currentTime / 60) * 60);
 
@@ -61,4 +62,9 @@ $(document).ready(function() {
 
   var game = new Game;
   game.runGame();
+
+  $("#timeJumpSubmit").click(function() {
+    game.currentTime -= parseInt($("#timeJumpInput").val());
+    game.timeRemaining += parseInt($("#timeJumpInput").val());
+  });
 });
