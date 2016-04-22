@@ -11,9 +11,14 @@ $(document).ready(function() {
     //Doomsday Timer
     this.timeRemaining = 192;
     this.countdownInterval = 0;
+
+    //Temperature
+    this.roomTemperature = 98;
+    this.watchTemperature = 63;
+    this.overheatThreshold = 95;
   }
 
-  var timer = function(game) {
+  var timeManager = function(game) {
     if(game.countdownInterval != game.fps) {
       game.countdownInterval += 1;
     } else {
@@ -51,8 +56,14 @@ $(document).ready(function() {
     }
   }
 
+  var temperatureManager = function(game) {
+    $("#roomTemp").text(game.roomTemperature);
+    $("#watchTemp").text(game.watchTemperature);
+  }
+
   Game.prototype.gameManager = function () {
-    timer(this);
+    timeManager(this);
+    temperatureManager(this);
   };
 
   Game.prototype.runGame = function () {
