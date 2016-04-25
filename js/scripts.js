@@ -7,6 +7,7 @@ $(document).ready(function() {
     this.currentTime = 48;
     this.flavorHour = 7;
     this.flavorMinute = 2;
+    this.moments = [];
 
     //Doomsday Timer
     this.timeRemaining = 192;
@@ -31,7 +32,6 @@ $(document).ready(function() {
     }
 
     //Clock
-    console.log(game.timeRemaining);
     var currentMinute = game.flavorMinute + Math.floor(game.currentTime / 60);
     var currentSecond = game.currentTime - (Math.floor(game.currentTime / 60) * 60);
 
@@ -60,7 +60,6 @@ $(document).ready(function() {
   }
 
   var temperatureManager = function(game) {
-
     if(game.watchTemperature < game.roomTemperature) {
       game.watchTemperature += .1;
     } else if (game.watchTemperature > game.roomTemperature){
@@ -72,6 +71,12 @@ $(document).ready(function() {
     $("#watchTemp").text(game.watchTemperature);
   }
 
+  var generateMoments = function(game) {
+    for (i = 0; i <= 240; i++) {
+      game.moments.push(i);
+    }
+  }
+
   Game.prototype.gameManager = function () {
     timeManager(this);
   };
@@ -79,6 +84,8 @@ $(document).ready(function() {
   Game.prototype.runGame = function () {
     var game = this;
     temperatureManager(this);
+    generateMoments(this);
+    console.log(game.moments);
     setInterval(function() {game.gameManager();}, 1000/game.fps);
   };
 
@@ -88,7 +95,7 @@ $(document).ready(function() {
   $("#timeJumpSubmit").click(function() {
     var input = parseInt($("#timeJumpInput").val());
 
-    if (game.watchTemperature + input < game.overheatThreshold) {
+    if (game.watchTemperature + input < game.overheatThreshold && input > 0) {
       game.currentTime -= input;
       game.timeRemaining += input;
       game.watchTemperature += input;
