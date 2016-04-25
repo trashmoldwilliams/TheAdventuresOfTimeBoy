@@ -13,15 +13,18 @@ $(document).ready(function() {
     this.countdownInterval = 0;
 
     //Temperature
-    this.roomTemperature = 98;
+    this.roomTemperature = 92;
     this.watchTemperature = 63;
-    this.overheatThreshold = 95;
+    this.overheatThreshold = 100;
+    this.thermostat = this.roomTemperature;
   }
 
   var timeManager = function(game) {
     if(game.countdownInterval != game.fps) {
       game.countdownInterval += 1;
     } else {
+      temperatureManager(game);
+
       game.countdownInterval = 0;
       game.timeRemaining -= 1;
       game.currentTime += 1;
@@ -57,17 +60,25 @@ $(document).ready(function() {
   }
 
   var temperatureManager = function(game) {
+
+    if(game.watchTemperature < game.roomTemperature) {
+      game.watchTemperature += .1;
+    } else if (game.watchTemperature > game.roomTemperature){
+      game.watchTemperature -= .1;
+    }
+    game.watchTemperature = parseFloat(game.watchTemperature.toFixed(2));
+
     $("#roomTemp").text(game.roomTemperature);
     $("#watchTemp").text(game.watchTemperature);
   }
 
   Game.prototype.gameManager = function () {
     timeManager(this);
-    temperatureManager(this);
   };
 
   Game.prototype.runGame = function () {
     var game = this;
+    temperatureManager(this);
     setInterval(function() {game.gameManager();}, 1000/game.fps);
   };
 
@@ -75,7 +86,13 @@ $(document).ready(function() {
   game.runGame();
 
   $("#timeJumpSubmit").click(function() {
-    game.currentTime -= parseInt($("#timeJumpInput").val());
-    game.timeRemaining += parseInt($("#timeJumpInput").val());
+    var input = parseInt($("#timeJumpInput").val());
+
+    if (game.watchTemperature + input < game.overheatThreshold) {
+      game.currentTime -= input;
+      game.timeRemaining += input;
+      game.watchTemperature += input;
+      $("#watchTemp").text(game.watchTemperature);
+    }
   });
 });
